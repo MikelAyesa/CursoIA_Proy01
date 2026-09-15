@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hola Mundo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Georgia, "Times New Roman", serif;
+      background: #f5f0e8;
+      color: #17211d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(23, 33, 29, 0.05) 1px, transparent 1px),
+        linear-gradient(rgba(23, 33, 29, 0.05) 1px, transparent 1px),
+        #f5f0e8;
+      background-size: 32px 32px;
+    }
+
+    main {
+      width: min(90vw, 900px);
+      padding: 64px 24px;
+      text-align: center;
+      border-block: 2px solid #17211d;
+      animation: aparecer 700ms ease-out both;
+    }
+
+    p {
+      margin: 0 0 16px;
+      font-family: "Courier New", monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      color: #b54124;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(3rem, 12vw, 8rem);
+      font-weight: 400;
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    @keyframes aparecer {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      main {
+        animation: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p>Mi primer sitio web</p>
+    <h1>Hola Mundo</h1>
+  </main>
+</body>
+</html>
