@@ -1,6 +1,5 @@
-from app.database import get_db
 from app.main import app
-from app.models.sala import SalaEstado
+from app.routers.salas import get_sala_service
 from app.schemas.sala import SalaCreate
 from app.services.sala_service import SalaService
 
@@ -105,6 +104,18 @@ def test_update_room_and_conflicts(client) -> None:
     assert conflict.status_code == 409
 
 
+def test_update_room_can_clear_description_with_null(client) -> None:
+    created = client.post(
+        "/api/salas",
+        json={"nombre": "Sala Limpia", "descripcion": "Temporal", "capacidad": 7, "ubicacion": "Bilbao", "equipamiento": []},
+    ).json()
+
+    updated = client.put(f"/api/salas/{created['id']}", json={"descripcion": None})
+
+    assert updated.status_code == 200
+    assert updated.json()["descripcion"] is None
+
+
 def test_delete_valid_room_returns_204_and_marks_inactive(client) -> None:
     created = client.post(
         "/api/salas",
@@ -128,26 +139,14 @@ def test_delete_with_future_reservations_returns_409(client, db_session) -> None
         SalaCreate(nombre="Sala Reservada", descripcion=None, capacidad=10, ubicacion="Bilbao", equipamiento=[])
     )
 
-    def override_get_db():
-        yield db_session
+    def override_service():
+        return SalaService(db_session, reservation_checker=ReservationCheckerStub())
 
-    original_dependency = app.dependency_overrides.get(get_db)
-    app.dependency_overrides[get_db] = override_get_db
-
-    original_service_init = SalaService.__init__
-
-    def patched_init(self, db, reservation_checker=None):
-        original_service_init(self, db, reservation_checker=ReservationCheckerStub())
-
-    SalaService.__init__ = patched_init
+    app.dependency_overrides[get_sala_service] = override_service
     try:
         response = client.delete(f"/api/salas/{sala.id}")
     finally:
-        SalaService.__init__ = original_service_init
-        if original_dependency is None:
-            app.dependency_overrides.pop(get_db, None)
-        else:
-            app.dependency_overrides[get_db] = original_dependency
+        app.dependency_overrides.pop(get_sala_service, None)
 
     assert response.status_code == 409
     assert response.json() == {"detail": "No se puede eliminar la sala porque tiene reservas futuras."}

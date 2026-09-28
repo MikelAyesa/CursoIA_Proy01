@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from sqlalchemy import Select, func, select
+from sqlalchemy import Select, select
 from sqlalchemy.orm import Session
 
 from app.models.sala import Sala, SalaEstado
@@ -42,7 +42,7 @@ class SalaRepository:
         if estado is not None:
             query = query.where(Sala.estado == estado)
         if ubicacion:
-            query = query.where(func.lower(Sala.ubicacion).contains(ubicacion.strip().lower()))
+            query = query.where(Sala.ubicacion_normalizada.contains(ubicacion.strip().lower()))
         if capacidad_minima is not None:
             query = query.where(Sala.capacidad >= capacidad_minima)
 

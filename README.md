@@ -17,9 +17,15 @@ pip install -r requirements.txt
 npm ci
 ```
 
+Si vas a conectar con SQL Server, instala además:
+
+```bash
+pip install -r requirements-sqlserver.txt
+```
+
 ## Configuración
 
-1. Copia `/home/runner/work/CursoIA_Proy01/CursoIA_Proy01/.env.example` a `.env`.
+1. Copia `.env.example` a `.env`.
 2. Define `DATABASE_URL`.
 
 Ejemplo SQLite para desarrollo:

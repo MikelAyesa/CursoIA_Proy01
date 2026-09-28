@@ -13,37 +13,40 @@ from app.services.sala_service import SalaService
 router = APIRouter(prefix="/api/salas", tags=["salas"])
 
 
+def get_sala_service(db: Session = Depends(get_db)) -> SalaService:
+    return SalaService(db)
+
+
 @router.get("", response_model=list[SalaResponse], status_code=status.HTTP_200_OK)
 def list_salas(
     estado: SalaEstado | None = Query(default=None),
     ubicacion: str | None = Query(default=None),
     capacidad_minima: Annotated[int | None, Query(ge=1, le=1000)] = None,
-    db: Session = Depends(get_db),
+    service: SalaService = Depends(get_sala_service),
 ) -> list[SalaResponse]:
-    service = SalaService(db)
     return service.get_all(estado=estado, ubicacion=ubicacion, capacidad_minima=capacidad_minima)
 
 
 @router.get("/{sala_id}", response_model=SalaResponse, status_code=status.HTTP_200_OK)
-def get_sala(sala_id: Annotated[int, Path(ge=1)], db: Session = Depends(get_db)) -> SalaResponse:
-    service = SalaService(db)
+def get_sala(sala_id: Annotated[int, Path(ge=1)], service: SalaService = Depends(get_sala_service)) -> SalaResponse:
     return service.get_by_id(sala_id)
 
 
 @router.post("", response_model=SalaResponse, status_code=status.HTTP_201_CREATED)
-def create_sala(payload: SalaCreate, db: Session = Depends(get_db)) -> SalaResponse:
-    service = SalaService(db)
+def create_sala(payload: SalaCreate, service: SalaService = Depends(get_sala_service)) -> SalaResponse:
     return service.create(payload)
 
 
 @router.put("/{sala_id}", response_model=SalaResponse, status_code=status.HTTP_200_OK)
-def update_sala(sala_id: Annotated[int, Path(ge=1)], payload: SalaUpdate, db: Session = Depends(get_db)) -> SalaResponse:
-    service = SalaService(db)
+def update_sala(
+    sala_id: Annotated[int, Path(ge=1)],
+    payload: SalaUpdate,
+    service: SalaService = Depends(get_sala_service),
+) -> SalaResponse:
     return service.update(sala_id, payload)
 
 
 @router.delete("/{sala_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_sala(sala_id: Annotated[int, Path(ge=1)], db: Session = Depends(get_db)) -> Response:
-    service = SalaService(db)
+def delete_sala(sala_id: Annotated[int, Path(ge=1)], service: SalaService = Depends(get_sala_service)) -> Response:
     service.delete(sala_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

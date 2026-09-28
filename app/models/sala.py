@@ -44,6 +44,7 @@ class Sala(Base):
     descripcion: Mapped[str | None] = mapped_column(String(500), nullable=True)
     capacidad: Mapped[int] = mapped_column(Integer, nullable=False)
     ubicacion: Mapped[str] = mapped_column(String(150), nullable=False)
+    ubicacion_normalizada: Mapped[str] = mapped_column(String(150), nullable=False)
     equipamiento: Mapped[list[str]] = mapped_column(JSONList(), nullable=False, default=list)
     estado: Mapped[SalaEstado] = mapped_column(
         SqlEnum(SalaEstado, native_enum=False, values_callable=lambda values: [value.value for value in values], length=20),
@@ -59,3 +60,5 @@ class Sala(Base):
 def sync_normalized_name(mapper: object, connection: object, target: Sala) -> None:
     target.nombre = target.nombre.strip()
     target.nombre_normalizado = target.nombre.lower()
+    target.ubicacion = target.ubicacion.strip()
+    target.ubicacion_normalizada = target.ubicacion.lower()
