@@ -69,6 +69,8 @@ class SalaService:
         try:
             result = operation()
             self.db.commit()
+            if isinstance(result, Sala):
+                self.db.refresh(result)
             return result
         except ConflictError:
             self.db.rollback()

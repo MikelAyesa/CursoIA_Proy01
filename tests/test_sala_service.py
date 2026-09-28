@@ -1,3 +1,4 @@
+import pytest
 from sqlalchemy.orm import Session
 
 from app.exceptions import ConflictError
@@ -44,8 +45,7 @@ def test_update_to_inactive_conflicts_when_future_reservations_exist(db_session:
         )
     )
 
-    try:
+    with pytest.raises(ConflictError) as exc_info:
         service.update(sala.id, SalaUpdate(estado=SalaEstado.inactiva))
-        assert False, "Se esperaba un conflicto por reservas futuras."
-    except ConflictError as exc:
-        assert "reservas futuras" in exc.detail
+
+    assert "reservas futuras" in exc_info.value.detail

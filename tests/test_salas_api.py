@@ -116,6 +116,18 @@ def test_update_room_can_clear_description_with_null(client) -> None:
     assert updated.json()["descripcion"] is None
 
 
+def test_update_room_without_description_keeps_existing_value(client) -> None:
+    created = client.post(
+        "/api/salas",
+        json={"nombre": "Sala Persistente", "descripcion": "Se mantiene", "capacidad": 11, "ubicacion": "Bilbao", "equipamiento": []},
+    ).json()
+
+    updated = client.put(f"/api/salas/{created['id']}", json={"capacidad": 13})
+
+    assert updated.status_code == 200
+    assert updated.json()["descripcion"] == "Se mantiene"
+
+
 def test_delete_valid_room_returns_204_and_marks_inactive(client) -> None:
     created = client.post(
         "/api/salas",

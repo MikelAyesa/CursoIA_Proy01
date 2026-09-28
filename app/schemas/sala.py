@@ -73,7 +73,11 @@ class SalaCreate(BaseModel):
 
 class SalaUpdate(BaseModel):
     nombre: str | None = None
-    descripcion: str | None = Field(default=None, max_length=500)
+    descripcion: str | None = Field(
+        default=None,
+        max_length=500,
+        description="Si se omite se conserva el valor actual; si se envía null se borra la descripción.",
+    )
     capacidad: int | None = Field(default=None, ge=1, le=1000)
     ubicacion: str | None = None
     equipamiento: list[str] | None = None

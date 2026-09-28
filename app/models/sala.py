@@ -47,7 +47,14 @@ class Sala(Base):
     ubicacion_normalizada: Mapped[str] = mapped_column(String(150), nullable=False)
     equipamiento: Mapped[list[str]] = mapped_column(JSONList(), nullable=False, default=list)
     estado: Mapped[SalaEstado] = mapped_column(
-        SqlEnum(SalaEstado, native_enum=False, values_callable=lambda values: [value.value for value in values], length=20),
+        SqlEnum(
+            SalaEstado,
+            native_enum=False,
+            values_callable=lambda values: [value.value for value in values],
+            length=20,
+            create_constraint=True,
+            validate_strings=True,
+        ),
         nullable=False,
         default=SalaEstado.disponible,
     )
