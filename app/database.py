@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Generator
+from functools import lru_cache
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
@@ -15,23 +16,28 @@ def _connect_args(database_url: str) -> dict[str, bool]:
     return {}
 
 
-settings = get_settings()
-engine = create_engine(
-    settings.database_url,
-    future=True,
-    pool_pre_ping=True,
-    connect_args=_connect_args(settings.database_url),
-)
-SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False, expire_on_commit=False, class_=Session)
+@lru_cache
+def get_engine():
+    settings = get_settings()
+    return create_engine(
+        settings.database_url,
+        future=True,
+        pool_pre_ping=True,
+        connect_args=_connect_args(settings.database_url),
+    )
+
+
+def get_session_factory():
+    return sessionmaker(bind=get_engine(), autocommit=False, autoflush=False, expire_on_commit=False, class_=Session)
 
 
 def get_db() -> Generator[Session, None, None]:
-    db = SessionLocal()
+    db = get_session_factory()()
     try:
         yield db
     finally:
         db.close()
 
 
-def create_db_and_tables() -> None:
-    Base.metadata.create_all(bind=engine)
+def create_db_and_tables(bind=None) -> None:
+    Base.metadata.create_all(bind=bind or get_engine())

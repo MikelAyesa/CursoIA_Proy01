@@ -49,3 +49,20 @@ def test_update_to_inactive_conflicts_when_future_reservations_exist(db_session:
         service.update(sala.id, SalaUpdate(estado=SalaEstado.inactiva))
 
     assert "reservas futuras" in exc_info.value.detail
+
+
+def test_update_to_inactive_succeeds_without_future_reservations(db_session: Session) -> None:
+    service = SalaService(db_session, reservation_checker=ReservationCheckerStub(False))
+    sala = service.create(
+        SalaCreate(
+            nombre="Sala Naranja",
+            descripcion=None,
+            capacidad=5,
+            ubicacion="Bilbao",
+            equipamiento=[],
+        )
+    )
+
+    updated = service.update(sala.id, SalaUpdate(estado=SalaEstado.inactiva))
+
+    assert updated.estado == SalaEstado.inactiva

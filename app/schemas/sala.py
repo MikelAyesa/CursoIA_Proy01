@@ -45,7 +45,10 @@ class SalaCreate(BaseModel):
     capacidad: int = Field(ge=1, le=1000)
     ubicacion: str
     equipamiento: list[str] = Field(default_factory=list)
-    estado: SalaEstado = SalaEstado.disponible
+    estado: SalaEstado = Field(
+        default=SalaEstado.disponible,
+        description="Estado inicial de la sala. Admite disponible, mantenimiento o inactiva.",
+    )
 
     @field_validator("nombre")
     @classmethod

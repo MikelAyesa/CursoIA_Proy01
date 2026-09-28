@@ -41,6 +41,23 @@ def test_duplicate_name_returns_409(client) -> None:
     assert response.json() == {"detail": "Ya existe una sala con ese nombre."}
 
 
+def test_create_sala_can_start_inactive(client) -> None:
+    response = client.post(
+        "/api/salas",
+        json={
+            "nombre": "Sala Archivo",
+            "descripcion": "Fuera de servicio",
+            "capacidad": 3,
+            "ubicacion": "Bilbao",
+            "equipamiento": [],
+            "estado": "inactiva",
+        },
+    )
+
+    assert response.status_code == 201
+    assert response.json()["estado"] == "inactiva"
+
+
 def test_list_and_filter_rooms(client) -> None:
     client.post(
         "/api/salas",
