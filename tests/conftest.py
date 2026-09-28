@@ -19,9 +19,11 @@ from app.config import get_settings
 os.environ["DATABASE_URL"] = get_settings().test_database_url
 get_settings.cache_clear()
 
-from app.database import get_db
+from app.database import get_db, get_engine
 from app.main import app
 from app.models.base import Base
+
+get_engine.cache_clear()
 
 
 TEST_DATABASE_URL = get_settings().database_url
