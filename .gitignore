@@ -5,3 +5,10 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+*.pyc
+*.db
+.env
