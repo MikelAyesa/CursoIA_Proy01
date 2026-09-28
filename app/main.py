@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
@@ -13,7 +12,6 @@ from app.database import create_db_and_tables
 from app.exceptions import DomainError
 from app.routers import salas_router
 
-logger = logging.getLogger(__name__)
 settings = get_settings()
 
 
@@ -38,11 +36,6 @@ def create_app() -> FastAPI:
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
         return JSONResponse(status_code=422, content={"detail": jsonable_encoder(exc.errors())})
-
-    @app.exception_handler(Exception)
-    async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-        logger.exception("Error no controlado en %s", request.url.path, exc_info=exc)
-        return JSONResponse(status_code=500, content={"detail": "Error interno del servidor."})
 
     return app
 
