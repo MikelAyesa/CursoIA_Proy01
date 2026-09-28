@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -13,12 +14,17 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+from app.config import get_settings
+
+os.environ["DATABASE_URL"] = get_settings().test_database_url
+get_settings.cache_clear()
+
 from app.database import get_db
 from app.main import app
 from app.models.base import Base
 
 
-TEST_DATABASE_URL = "sqlite+pysqlite://"
+TEST_DATABASE_URL = get_settings().database_url
 engine = create_engine(
     TEST_DATABASE_URL,
     connect_args={"check_same_thread": False},

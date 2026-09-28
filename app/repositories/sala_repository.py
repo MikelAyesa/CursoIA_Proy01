@@ -60,20 +60,17 @@ class SalaRepository:
         sala = Sala(**payload)
         self.db.add(sala)
         self.db.flush()
-        self.db.refresh(sala)
         return sala
 
     def update(self, sala: Sala, payload: dict) -> Sala:
         for key, value in payload.items():
             setattr(sala, key, value)
         self.db.flush()
-        self.db.refresh(sala)
         return sala
 
     def deactivate(self, sala: Sala) -> Sala:
         sala.estado = SalaEstado.inactiva
         self.db.flush()
-        self.db.refresh(sala)
         return sala
 
     def has_future_reservations(self, sala_id: int) -> bool:

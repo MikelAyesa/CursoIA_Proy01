@@ -37,7 +37,12 @@ def create_sala(payload: SalaCreate, service: SalaService = Depends(get_sala_ser
     return service.create(payload)
 
 
-@router.put("/{sala_id}", response_model=SalaResponse, status_code=status.HTTP_200_OK)
+@router.put(
+    "/{sala_id}",
+    response_model=SalaResponse,
+    status_code=status.HTTP_200_OK,
+    description="Acepta actualización parcial: los campos omitidos conservan su valor actual.",
+)
 def update_sala(
     sala_id: Annotated[int, Path(ge=1)],
     payload: SalaUpdate,

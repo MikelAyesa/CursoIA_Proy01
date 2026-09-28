@@ -40,7 +40,7 @@ class Sala(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     nombre: Mapped[str] = mapped_column(String(100), nullable=False)
-    nombre_normalizado: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+    nombre_normalizado: Mapped[str] = mapped_column(String(100), nullable=False)
     descripcion: Mapped[str | None] = mapped_column(String(500), nullable=True)
     capacidad: Mapped[int] = mapped_column(Integer, nullable=False)
     ubicacion: Mapped[str] = mapped_column(String(150), nullable=False)
