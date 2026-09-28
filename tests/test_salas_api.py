@@ -23,6 +23,8 @@ def test_create_sala_returns_201(client) -> None:
     assert body["ubicacion"] == "Bilbao"
     assert body["equipamiento"] == ["pantalla", "pizarra"]
     assert body["estado"] == "disponible"
+    assert body["created_at"]
+    assert body["updated_at"]
 
 
 def test_duplicate_name_returns_409(client) -> None:
@@ -119,6 +121,19 @@ def test_update_room_and_conflicts(client) -> None:
     assert updated.json()["capacidad"] == 20
     assert missing.status_code == 404
     assert conflict.status_code == 409
+
+
+def test_update_room_changes_updated_at(client) -> None:
+    created = client.post(
+        "/api/salas",
+        json={"nombre": "Sala Tiempo", "descripcion": "Original", "capacidad": 10, "ubicacion": "Bilbao", "equipamiento": []},
+    ).json()
+
+    updated = client.put(f"/api/salas/{created['id']}", json={"descripcion": "Actualizada"})
+
+    assert updated.status_code == 200
+    assert updated.json()["created_at"] == created["created_at"]
+    assert updated.json()["updated_at"] >= created["updated_at"]
 
 
 def test_update_room_can_clear_description_with_null(client) -> None:
